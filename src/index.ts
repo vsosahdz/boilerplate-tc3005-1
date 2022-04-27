@@ -1,5 +1,5 @@
 import Server from "./providers/Server";
-import { PORT,NODE_ENV } from "./configuration";
+import { PORT,NODE_ENV } from "./config";
 import express from 'express';
 import cors from 'cors';
 import UserController from "./controllers/UserController";
