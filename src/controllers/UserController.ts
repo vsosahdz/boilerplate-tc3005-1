@@ -1,57 +1,56 @@
-import {Request, Response} from 'express';
-import AbstractController from './AbstractController';
+import { Request, Response } from 'express';
+import AbstractController from "./AbstractController";
+import GrupoModel from '../modelsNOSQL/grupoNOSQL';
 import db from '../models';
-import GroupModel from '../modelsNOSQL/grupoNSQL';
-import {UUIDV4 } from 'sequelize';
+
 
 
 class UserController extends AbstractController{
-    //singleton
-    private static instance:UserController;
+    protected validateBody(type: any) {
+        throw new Error('Method not implemented.');
+    }
+    
+    //Singleton
 
+    private static instance: UserController;
     public static getInstance():AbstractController{
-        if(this.instance){ //La instancia ya fue creada
+        if(this.instance){
             return this.instance;
         }
-        //En caso de que no haya creada la instancia la creamos
         this.instance = new UserController("user");
         return this.instance;
     }
     
-    //Configuracion de rutas
+    
+    //Routes
     protected initRoutes(): void {
-        this.router.get('/readUser',this.getReadUser.bind(this));
+        this.router.post('/createUser',this.postCreateUser.bind(this)); // Create
         this.router.get('/readUsers',this.getReadUsers.bind(this));
-        this.router.post('/createUsers',this.postCreateUser.bind(this));
-        this.router.post('/createGroup',this.postCreateGroup.bind(this));
-        
-
+        this.router.get('/readUser',this.getReadUser.bind(this));
+        this.router.post('/createGrupo',this.postCreateGrupo.bind(this)); 
+        this.router.get('/readGrupos',this.getReadGrupos.bind(this));    
+        //this.router.post('/updateUser');
+        //this.router.post('/deleteUser');        
     }
 
-    //Controlador
-    private async getReadUser(req:Request,res:Response){
+    private async getReadGrupos(req: Request, res: Response){
         try{
-            res.status(200).send({data:"User"});
-        }catch(error){
-            if(error instanceof Error){
-                res.status(500).send({message: error.message});
-            }else{
-                res.status(501).send({message:"Error"})
-            }
+            const grupos = await GrupoModel.scan().exec().promise();
+            res.status(200).send(grupos[0].Items);
+        }catch(err){
+            res.status(500).send("Error fatal:"+err);
         }
     }
 
-    private async getReadUsers(req:Request,res:Response){
+    private async postCreateGrupo(req:Request,res:Response){
         try{
-            //SELECT * FROM User;
-            let resultado:any = await db["User"].findAll();
-            res.status(200).send(resultado);
-        }catch(error){
-            if(error instanceof Error){
-                res.status(500).send({message: error.message});
-            }else{
-                res.status(501).send({message:"Error"})
-            }
+            console.log(req.body);
+            await GrupoModel.create(req.body);
+            console.log("Registro existoso");
+            res.status(200).send("Registro existoso");
+        }catch(err:any){
+            console.log(err);
+            res.status(500).send("Error fatal");
         }
     }
 
@@ -63,22 +62,42 @@ class UserController extends AbstractController{
             res.status(200).send("Registro exitoso");
         }catch(err:any){
             console.log("Error")
-            res.status(500).send("Error fatal");
+            res.status(500).send("Error fatal:" +err);
         }
-                
     }
 
-    private async postCreateGroup(req:Request,res:Response){
+    private async getReadUser(req:Request,res:Response){
+       try{
+            res.status(200).send({ data:"User"});
+       }catch(error){
+           if (error instanceof Error){
+            res.status(500).send({ message: error.message });
+           }else{
+            res.status(500).send({ message: "Error" });
+           }
+       }     
+    }
+
+    private async getReadUsers(req:Request,res:Response){
         try{
-            console.log(req.body);
-            
-            await GroupModel.create(req.body);
-            console.log("Registro exitoso");
-            res.status(200).send("Registro exitoso");
-        }catch(err:any){
-            console.log(err)
-            res.status(500).send("Error fatal");
+            let usuarios= await db["User"].findAll()
+            console.log("Usuario:", usuarios);
+            res.send(usuarios);
+        
+        }catch(error){
+            if (error instanceof Error){
+                res.status(500).send({ message: error.message });
+            }else{
+                res.status(500).send({ message: "Error" });
+            }
         }
+    }
+    
+    private async postUpdateUser(req:Request,res:Response){
+
+    }
+    private async postDeleteUser(req:Request,res:Response){
+
     }
     
 }

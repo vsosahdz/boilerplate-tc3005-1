@@ -5,6 +5,7 @@ import cors from 'cors';
 import UserController from "./controllers/UserController";
 
 
+
 const app = new Server({
     port:PORT,
     middlewares:[
@@ -17,5 +18,15 @@ const app = new Server({
     ],
     env:NODE_ENV
 });
+
+declare global{
+    namespace Express{
+        interface Request{
+            user:string;
+            token:string;
+        }
+    }
+}
+
 
 app.init();

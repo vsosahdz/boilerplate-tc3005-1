@@ -1,53 +1,59 @@
-import { Model, UUIDV4 } from 'sequelize';
+'use strict';
+import {Model} from 'sequelize';
 
-//Interfaz defina los atributos necesarios que debe tener un registro en la tabla User
-interface UserAttributes{
-  idUser:string,
-  nameUser:string,
-  emailUser:string,
-  passwordUser:string
+
+interface UserAttributes {
+  awsCognitoId:string;
+  name:string;
+  role:string;
+  email:string;
 }
 
-module.exports = (sequelize:any, DataTypes:any) => {
+export enum UserRoles {
+	ADMIN = 'ADMIN',
+	SUPERVISOR = 'SUPERVISOR',
+  AGENT = 'AGENT',
+	CUSTOMER = 'CUSTOMER',
+}
+
+module.exports = (sequelize: any, DataTypes: any) => {
   class User extends Model<UserAttributes> implements UserAttributes {
-    
-    idUser!: string;
-    nameUser!: string;
-    emailUser!: string;
-    passwordUser!: string;
+    awsCognitoId!: string;
+    name!: string;
+    role!: string;
+    email!: string;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models:any) {
+    static associate(models: any) {
       // define association here
       User.belongsToMany(models.Project,{
-        through:'ProjectAssigments'
+        through:'ProjectAssigment'
       })
     }
   }
   User.init({
-    //Definición de las caracteristicas de los atributos en la tabla
-    idUser:{
-      type:DataTypes.UUID,
-      defaultValue: UUIDV4,
-      allowNull:false,
-      primaryKey:true
+    awsCognitoId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true
     },
-    nameUser:{
-      type:DataTypes.STRING,
-      allowNull:false
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
-    emailUser:{
+    role:{
       type:DataTypes.STRING,
       allowNull:false,
-      unique:true
+      defaultValue:UserRoles.CUSTOMER
     },
-    passwordUser:{
-      type:DataTypes.STRING,
-      allowNull:false
-    }
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true      
+    }    
   }, {
     sequelize,
     modelName: 'User',
