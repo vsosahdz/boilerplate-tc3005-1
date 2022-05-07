@@ -2,12 +2,49 @@ import { Request, Response } from 'express';
 import AbstractController from "./AbstractController";
 import GrupoModel from '../modelsNOSQL/grupoNOSQL';
 import db from '../models';
+import { checkSchema } from 'express-validator';
 
 
 
 class UserController extends AbstractController{
-    protected validateBody(type: any) {
-        throw new Error('Method not implemented.');
+    //Adecuar
+    protected validateBody(type: |'createUser'|'updateUser'|'deleteUser') {
+        switch(type){
+            case 'createUser':
+                return checkSchema({
+                    email:{
+                        in:'body',
+                        isEmail:{
+                            errorMessage:'Must be a valid email'
+                        }
+                    },
+                    password:{
+                        in:'body',
+                        isString:{
+                            errorMessage:'Must be a string'
+                        },
+                        isLength:{
+                            options:{
+                                min:8
+                            },
+                            errorMessage:'Must be at least 8 characters'                            
+                        }
+                    },
+                    name:{
+                        in:'body',
+                        isString:{
+                            errorMessage:'Must be a string'
+                        },
+                        isLength:{
+                            options:{
+                                min:2,
+                                max:40
+                            },
+                            errorMessage:'Must between 2 and 40 characters'                            
+                        }
+                    }
+                });
+        }
     }
     
     //Singleton

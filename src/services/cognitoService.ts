@@ -33,11 +33,11 @@ class CognitoService {
     //Metodo de registro
 	public async signUpUser(email: string, password: string, userAttr: { Name: CognitoAttributes; Value: string }[]) {
 		const params = {
-			ClientId: this.clientId /* required */,
-			Password: password /* required */,
-			Username: email /* required */,
-			SecretHash: this.hashSecret(email) /* required */,
-			UserAttributes: userAttr,
+			ClientId: this.clientId /* required App data*/,
+			Password: password /* required User data*/,
+			Username: email /* required User data*/,
+			SecretHash: this.hashSecret(email) /* required App data*/,
+			UserAttributes: userAttr, //User data
 		};
 
 		return await this.cognitoIdentity.signUp(params).promise();

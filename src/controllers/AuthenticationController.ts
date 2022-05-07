@@ -21,11 +21,11 @@ class AuthenticationController extends AbstractController{
     }
     
     protected initRoutes(): void {
-        this.router.post('/signup', this.validateBody('signup'), this.handleErrors, this.signup.bind(this));
-        this.router.post('/signin', this.validateBody('signin'), this.handleErrors, this.signin.bind(this));
-		this.router.post('/verify', this.validateBody('verify'), this.handleErrors, this.verify.bind(this));
-        this.router.get('/readUsers',this.handleErrors,this.getReadUsers.bind(this));
-        this.router.get('/readUsersRe',this.handleErrors,this.getReadUsersRe.bind(this));
+        this.router.post('/signup',this.validateBody('signup'),this.handleErrors, this.signup.bind(this));
+        this.router.post('/signin', this.signin.bind(this));
+		this.router.post('/verify',this.verify.bind(this));
+        this.router.get('/readUsers',this.getReadUsers.bind(this));
+        this.router.get('/readUsersRe',this.getReadUsersRe.bind(this));
     }
 
     private async signup(req: Request, res: Response) {

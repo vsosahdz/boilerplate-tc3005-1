@@ -23,5 +23,7 @@ export default abstract class AbstractController{
         this.initRoutes();
     }
     protected abstract initRoutes():void;
+
+    protected abstract validateBody(type:any):any;
     
 }

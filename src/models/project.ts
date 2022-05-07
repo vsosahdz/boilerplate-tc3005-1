@@ -23,6 +23,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       Project.belongsToMany(models.User,{
         through:'ProjectAssigment'
       })
+      
     }
   }
   Project.init({
