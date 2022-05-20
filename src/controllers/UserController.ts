@@ -2,49 +2,12 @@ import { Request, Response } from 'express';
 import AbstractController from "./AbstractController";
 import GrupoModel from '../modelsNOSQL/grupoNOSQL';
 import db from '../models';
-import { checkSchema } from 'express-validator';
 
 
 
 class UserController extends AbstractController{
-    //Adecuar
-    protected validateBody(type: |'createUser'|'updateUser'|'deleteUser') {
-        switch(type){
-            case 'createUser':
-                return checkSchema({
-                    email:{
-                        in:'body',
-                        isEmail:{
-                            errorMessage:'Must be a valid email'
-                        }
-                    },
-                    password:{
-                        in:'body',
-                        isString:{
-                            errorMessage:'Must be a string'
-                        },
-                        isLength:{
-                            options:{
-                                min:8
-                            },
-                            errorMessage:'Must be at least 8 characters'                            
-                        }
-                    },
-                    name:{
-                        in:'body',
-                        isString:{
-                            errorMessage:'Must be a string'
-                        },
-                        isLength:{
-                            options:{
-                                min:2,
-                                max:40
-                            },
-                            errorMessage:'Must between 2 and 40 characters'                            
-                        }
-                    }
-                });
-        }
+    protected validateBody(type: any) {
+        throw new Error('Method not implemented.');
     }
     
     //Singleton
@@ -66,8 +29,20 @@ class UserController extends AbstractController{
         this.router.get('/readUser',this.getReadUser.bind(this));
         this.router.post('/createGrupo',this.postCreateGrupo.bind(this)); 
         this.router.get('/readGrupos',this.getReadGrupos.bind(this));    
-        //this.router.post('/updateUser');
+        this.router.get('/readGruposToken',this.authMiddleware.verifyToken,this.getReadGruposToken.bind(this));
+        this.router.get('/readGruposTokenPermission',this.authMiddleware.verifyToken,this.permissionMiddleware.checkIsAdmin,this.getReadGruposToken.bind(this));
+        
         //this.router.post('/deleteUser');        
+    }
+
+    private async getReadGruposToken(req: Request, res: Response){
+        
+        try{
+            const grupos = await GrupoModel.scan().exec().promise();            
+            res.status(200).send(grupos[0].Items);
+        }catch(err){
+            res.status(500).send("Error fatal:"+err);
+        }
     }
 
     private async getReadGrupos(req: Request, res: Response){
@@ -83,7 +58,7 @@ class UserController extends AbstractController{
         try{
             console.log(req.body);
             await GrupoModel.create(req.body);
-            console.log("Registro existoso");
+            console.log("Registro existos");
             res.status(200).send("Registro existoso");
         }catch(err:any){
             console.log(err);

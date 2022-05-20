@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import crypto from 'crypto';
-import { COGNITO_APP_CLIENT_ID, COGNITO_APP_SECRET_HASH, AWS_REGION_1 } from '../config';
+import { COGNITO_APP_CLIENT_ID, COGNITO_APP_SECRET_HASH, AWS_REGION } from '../config';
 
 type CognitoAttributes = 'email' | 'name'|'phone_number' ;
 
@@ -25,7 +25,7 @@ class CognitoService {
 
 	private constructor() {
 		this.config = {
-			region: AWS_REGION_1,
+			region: AWS_REGION,
 		};
 		this.cognitoIdentity = new AWS.CognitoIdentityServiceProvider(this.config);
 	}

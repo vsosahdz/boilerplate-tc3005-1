@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 
-//Clase para la validación de errores
 class ValidationErrorMiddleware {
 	//422 Unprocessable Entity
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
